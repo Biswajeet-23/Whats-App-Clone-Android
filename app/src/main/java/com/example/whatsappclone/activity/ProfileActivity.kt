@@ -6,11 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.example.whatsappclone.MainActivity
 import com.example.whatsappclone.R
 import com.example.whatsappclone.databinding.ActivityProfileBinding
+import com.example.whatsappclone.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import java.util.Date
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -35,6 +38,7 @@ class ProfileActivity : AppCompatActivity() {
 
         database = FirebaseDatabase.getInstance()
         storage = FirebaseStorage.getInstance()
+        auth = FirebaseAuth.getInstance()
 
         binding.userLogo.setOnClickListener {
             val intent = Intent()
@@ -55,7 +59,27 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun uploadData() {
+        val reference = storage.reference.child("Profile").child(Date().time.toString())
+        reference.putFile(selectedImg).addOnCompleteListener{
+            if(it.isSuccessful){
+                reference.downloadUrl.addOnSuccessListener { task ->
+                    uploadInfo(task.toString())
+                }
+            }
+        }
+    }
 
+    private fun uploadInfo(imageUrl: String) {
+        val user = UserModel(auth.uid.toString(), binding.userName.text.toString(), auth.currentUser!!.phoneNumber.toString(), imageUrl)
+
+        database.reference.child("users")
+            .child(auth.uid.toString())
+            .setValue(user)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Data Successfully inserted", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

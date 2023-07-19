@@ -12,4 +12,5 @@
     <color name="whatsAppPrimary">#128C7E</color>
     <color name="whatsAppPrimaryDark">#075E54</color>
     <color name="ascent">#25D366</color>
+    <color name="whatsAppPrimaryLight">#B8FFF8</color>
 </resources>

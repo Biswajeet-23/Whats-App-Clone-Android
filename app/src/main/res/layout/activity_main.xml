@@ -16,17 +16,20 @@
             android:layout_height="wrap_content"
             android:minWidth="?actionBarSize"
             android:padding="16dp"
-            android:text="Whatsapp"
+            android:text="WhatsApp"
             android:textColor="@color/white"
             android:textStyle="bold"
-            android:textSize="18sp"/>
+            android:textSize="20sp"/>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:tabTextColor="@color/whatsAppPrimaryLight"
+            app:tabSelectedTextColor="@color/white"
             app:tabTextAppearance="@style/TabTextAppearance"
-            />
+            android:backgroundTint="@color/whatsAppPrimary"
+            app:tabIndicatorColor="@color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -31,5 +31,16 @@
     <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
         <!-- Set textAllCaps to false to disable all caps for tab text -->
         <item name="textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="SelectedTextAppearance" parent="TextAppearance.Design.Tab">
+        <!-- Set textAllCaps to false to disable all caps for tab text -->
+        <item name="textAllCaps">false</item>
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+
+    <style name="SelectedIndicatorAppearance" parent="Widget.Material3.NavigationRailView.ActiveIndicator">
+        <item name="android:backgroundTint">@color/white</item>
     </style>
 </resources>
