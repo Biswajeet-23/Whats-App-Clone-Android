@@ -1,12 +1,14 @@
 package com.example.whatsappclone.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.whatsappclone.R
+import com.example.whatsappclone.activity.ChatActivity
 import com.example.whatsappclone.databinding.ChatUserItemLayoutBinding
 import com.example.whatsappclone.model.UserModel
 
@@ -28,5 +30,10 @@ class ChatAdapter(var context: Context, var list: ArrayList<UserModel>) : Recycl
         val user = list[position]
         Glide.with(context).load(user.imageUrl).into(holder.binding.userImage)
         holder.binding.itemUserName.text = user.name
+        holder.itemView.setOnClickListener{
+            val intent = Intent(context, ChatActivity::class.java)
+            intent.putExtra("uid", user.uid)
+            context.startActivity(intent)
+        }
     }
 }

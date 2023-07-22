@@ -17,7 +17,8 @@ import com.google.firebase.database.ValueEventListener
 
 class ChatFragment : Fragment() {
 
-    private lateinit var binding: FragmentChatBinding
+    private var _binding: FragmentChatBinding?=null
+    private val binding get() = _binding
     private var database: FirebaseDatabase? =null
     lateinit var userList: ArrayList<UserModel>
 
@@ -26,7 +27,7 @@ class ChatFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentChatBinding.inflate(layoutInflater)
+        _binding = FragmentChatBinding.inflate(inflater, container, false)
 
         database = FirebaseDatabase.getInstance()
         userList = ArrayList()
@@ -38,11 +39,11 @@ class ChatFragment : Fragment() {
 
                     for(snapshot1 in snapshot.children){
                         val user = snapshot1.getValue(UserModel::class.java)
-                        if(user!!.uId != FirebaseAuth.getInstance().uid){
+                        if(user!!.uid != FirebaseAuth.getInstance().uid){
                             userList.add(user)
                         }
                     }
-                    binding.userListRecyclerView.adapter = ChatAdapter(requireContext(), userList)
+                    binding?.userListRecyclerView?.adapter = ChatAdapter(requireContext(), userList)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -50,6 +51,6 @@ class ChatFragment : Fragment() {
                 }
             })
 
-        return binding.root
+        return binding?.root
     }
 }
