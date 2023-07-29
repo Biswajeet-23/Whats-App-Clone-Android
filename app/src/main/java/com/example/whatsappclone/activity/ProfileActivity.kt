@@ -4,14 +4,17 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.whatsappclone.MainActivity
 import com.example.whatsappclone.R
 import com.example.whatsappclone.databinding.ActivityProfileBinding
 import com.example.whatsappclone.model.UserModel
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import java.util.Date
 
@@ -63,14 +66,27 @@ class ProfileActivity : AppCompatActivity() {
         reference.putFile(selectedImg).addOnCompleteListener{
             if(it.isSuccessful){
                 reference.downloadUrl.addOnSuccessListener { task ->
-                    uploadInfo(task.toString())
+                    getTokenAndUploadInfo(task.toString())
                 }
             }
         }
     }
 
-    private fun uploadInfo(imageUrl: String) {
-        val user = UserModel(auth.uid.toString(), binding.userName.text.toString(), auth.currentUser!!.phoneNumber.toString(), imageUrl)
+    private fun getTokenAndUploadInfo(imageUrl: String){
+        var token: String? = null
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if(!task.isSuccessful){
+                Log.d("FCM error", "Error in FCM")
+                return@OnCompleteListener
+            }
+            Log.d("FCM", task.result)
+            token = task.result
+            uploadInfo(imageUrl, token)
+        })
+    }
+
+    private fun uploadInfo(imageUrl: String, token: String?) {
+        val user = UserModel(auth.uid.toString(), binding.userName.text.toString(), auth.currentUser!!.phoneNumber.toString(), imageUrl, token)
 
         database.reference.child("users")
             .child(auth.uid.toString())

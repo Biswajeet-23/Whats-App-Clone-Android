@@ -44,6 +44,7 @@ class OTPActivity : AppCompatActivity() {
             .setActivity(this)
             .setCallbacks(object: PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
                 override fun onVerificationCompleted(p0: PhoneAuthCredential) {
+                    dialog.dismiss()
                     Log.d("On Verification completed", "$p0")
                 }
 
@@ -75,15 +76,14 @@ class OTPActivity : AppCompatActivity() {
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
+                dialog.dismiss()
                 if (task.isSuccessful) {
-                    dialog.dismiss()
                     // Sign in success, update UI with the signed-in user's information
                     Log.d("on Verified", "signInWithCredential:success")
                     val user = task.result?.user
                     startActivity(Intent(this, ProfileActivity::class.java))
                     finish()
                 } else {
-                    dialog.dismiss()
                     // Sign in failed, display a message and update the UI
                     Log.d("on Verify failed", "signInWithCredential:failure"+task.exception)
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {

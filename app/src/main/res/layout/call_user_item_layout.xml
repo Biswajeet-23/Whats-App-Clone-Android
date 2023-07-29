@@ -29,7 +29,6 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/cardView2"
             android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
             android:orientation="vertical"
             android:layout_marginStart="15dp">
 
@@ -42,14 +41,32 @@
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
-            <TextView
-                android:id="@+id/recentMessage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tap to Chat"
-                android:textSize="13sp"/>
-
         </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/baseline_videocam_24"
+            app:tint="@color/whatsAppPrimary"
+            android:layout_marginEnd="25dp"/>
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/baseline_call_24"
+            app:tint="@color/whatsAppPrimary" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

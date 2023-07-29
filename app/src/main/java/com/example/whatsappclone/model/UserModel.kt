@@ -5,4 +5,5 @@ data class UserModel (
     val name: String?="",
     val number: String?="",
     val imageUrl: String?="",
+    val fcmToken: String?="",
 )
