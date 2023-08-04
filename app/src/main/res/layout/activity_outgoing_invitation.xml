@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.meetingInvitation.OutgoingInvitationActivity"
+    android:background="@drawable/background_meeting_invitation">
+
+    <TextView
+        android:id="@+id/callTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Video Call"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="23sp"
+        android:layout_marginTop="90dp"
+        android:layout_centerHorizontal="true"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/callCV"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
+        android:backgroundTint="#66BB6A"
+        app:cardCornerRadius="80dp">
+
+        <ImageView
+            android:id="@+id/callImg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User"
+        android:textColor="@color/white"
+        android:textSize="23sp"
+        android:textStyle="bold"
+        android:layout_below="@id/callCV"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cancel"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:cardCornerRadius="60dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        android:layout_marginEnd="50dp"
+        android:backgroundTint="#FF3D00">
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:src="@drawable/baseline_close_24"
+            android:scaleType="centerCrop"
+            app:tintMode="@color/white"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</RelativeLayout>

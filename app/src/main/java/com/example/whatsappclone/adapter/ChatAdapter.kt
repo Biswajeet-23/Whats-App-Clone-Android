@@ -26,11 +26,9 @@ class ChatAdapter(var context: Context, var list: ArrayList<UserModel>) : Recycl
         val profileImageView: MaterialCardView = view.findViewById(R.id.cardView2)
         val usernameTextView: TextView = view.findViewById(R.id.itemUserName)
     }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
         return ChatViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.chat_user_item_layout, parent, false))
     }
-
     override fun getItemCount(): Int {
         return list.size
     }

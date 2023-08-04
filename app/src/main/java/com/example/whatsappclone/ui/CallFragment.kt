@@ -1,15 +1,19 @@
 package com.example.whatsappclone.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.example.whatsappclone.R
+import com.example.whatsappclone.activity.meetingInvitation.OutgoingInvitationActivity
 import com.example.whatsappclone.adapter.CallAdapter
 import com.example.whatsappclone.adapter.ChatAdapter
 import com.example.whatsappclone.databinding.FragmentCallBinding
 import com.example.whatsappclone.databinding.FragmentChatBinding
+import com.example.whatsappclone.listener.UserListener
 import com.example.whatsappclone.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -17,7 +21,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class CallFragment : Fragment() {
+class CallFragment : Fragment(), UserListener {
 
     private var _binding: FragmentCallBinding?=null
     private val binding get() = _binding
@@ -44,7 +48,7 @@ class CallFragment : Fragment() {
                             userList.add(user)
                         }
                     }
-                    binding?.callListRecyclerView?.adapter = CallAdapter(requireContext(), userList)
+                    binding?.callListRecyclerView?.adapter = CallAdapter(requireContext(), userList, this@CallFragment)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -53,5 +57,28 @@ class CallFragment : Fragment() {
             })
 
         return binding?.root
+    }
+
+    override fun initiateVideoMeeting(user: UserModel) {
+        if(user.fcmToken == null || user.fcmToken.trim().isEmpty()){
+            Toast.makeText(requireContext(), user.name + " is not available for meeting", Toast.LENGTH_SHORT).show()
+        }else{
+            val intent = Intent(requireContext(), OutgoingInvitationActivity::class.java)
+            intent.putExtra("name", user.name)
+            intent.putExtra("token", user.fcmToken)
+            intent.putExtra("image", user.imageUrl)
+            intent.putExtra("number", user.number)
+            intent.putExtra("id", user.uid)
+            intent.putExtra("meetingType", "video")
+            startActivity(intent)
+        }
+    }
+
+    override fun initiateAudioMeeting(user: UserModel) {
+        if(user.fcmToken == null || user.fcmToken.trim().isEmpty()){
+            Toast.makeText(requireContext(), user.name + " is not available for meeting", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(requireContext(), "Audio meeting with " + user.name, Toast.LENGTH_SHORT).show()
+        }
     }
 }

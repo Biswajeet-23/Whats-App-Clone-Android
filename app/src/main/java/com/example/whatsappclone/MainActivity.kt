@@ -1,6 +1,9 @@
 package com.example.whatsappclone
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.example.whatsappclone.activity.PhoneNoAuthActivity
 import com.example.whatsappclone.adapter.ViewPagerAdapter
 import com.example.whatsappclone.databinding.ActivityMainBinding
+import com.example.whatsappclone.service.CallNotificationForegroundService
 import com.example.whatsappclone.service.CloudMessagingService
 import com.example.whatsappclone.ui.CallFragment
 import com.example.whatsappclone.ui.ChatFragment
@@ -26,6 +30,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
 
+    companion object{
+        private const val CHANNEL_ID = "call_channel_id"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)

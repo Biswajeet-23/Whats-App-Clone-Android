@@ -1,4 +1,8 @@
 package com.example.whatsappclone.listener
 
-class UserListener {
+import com.example.whatsappclone.model.UserModel
+
+interface UserListener {
+    fun initiateVideoMeeting(user: UserModel)
+    fun initiateAudioMeeting(user: UserModel)
 }

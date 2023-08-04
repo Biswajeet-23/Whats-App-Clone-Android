@@ -13,4 +13,6 @@
     <color name="whatsAppPrimaryDark">#075E54</color>
     <color name="ascent">#25D366</color>
     <color name="whatsAppPrimaryLight">#B8FFF8</color>
+    <color name="colorMeetingInvitationStart">#4004BB</color>
+    <color name="colorMeetingInvitationEnd">#8A1AAA</color>
 </resources>

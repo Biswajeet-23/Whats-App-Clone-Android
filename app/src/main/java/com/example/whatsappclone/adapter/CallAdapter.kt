@@ -13,11 +13,13 @@ import com.bumptech.glide.Glide
 import com.example.whatsappclone.R
 import com.example.whatsappclone.activity.ChatActivity
 import com.example.whatsappclone.databinding.CallUserItemLayoutBinding
+import com.example.whatsappclone.listener.UserListener
 import com.example.whatsappclone.model.UserModel
 import com.google.android.material.card.MaterialCardView
 
-class CallAdapter(var context: Context, var list: ArrayList<UserModel>) : RecyclerView.Adapter<CallAdapter.CallViewHolder>() {
+class CallAdapter(var context: Context, var list: ArrayList<UserModel>, private var userlistener: UserListener) : RecyclerView.Adapter<CallAdapter.CallViewHolder>() {
 
+    private val userListener: UserListener = userlistener
     inner class CallViewHolder(view: View) : RecyclerView.ViewHolder(view){
         var binding : CallUserItemLayoutBinding = CallUserItemLayoutBinding.bind(view)
         val profileImageView: MaterialCardView = view.findViewById(R.id.cardView2)
@@ -36,5 +38,11 @@ class CallAdapter(var context: Context, var list: ArrayList<UserModel>) : Recycl
         val user = list[position]
         Glide.with(context).load(user.imageUrl).into(holder.binding.userImage)
         holder.binding.itemUserName.text = user.name
+        holder.binding.videoMeeting.setOnClickListener {
+            userListener.initiateVideoMeeting(user)
+        }
+        holder.binding.audioMeeting.setOnClickListener {
+            userListener.initiateAudioMeeting(user)
+        }
     }
 }

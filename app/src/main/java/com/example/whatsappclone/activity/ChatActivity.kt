@@ -1,7 +1,10 @@
 package com.example.whatsappclone.activity
 
+import android.content.Context
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.VibrationEffect
 import android.util.Log
 import android.view.Window
 import android.widget.Toast
@@ -187,6 +190,7 @@ class ChatActivity : AppCompatActivity() {
 //
 //                }
 //            )
+
     }
 
     private fun userProfileSetUp() {
