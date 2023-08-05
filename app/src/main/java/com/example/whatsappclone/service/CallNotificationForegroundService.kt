@@ -53,12 +53,12 @@ class CallNotificationForegroundService: Service() {
             val imageUrl = intent?.getStringExtra("image")
             val number = intent?.getStringExtra("number")
             val token = intent?.getStringExtra("fcmToken")
-            val msg = intent?.getStringExtra("type")
+            val msgType = intent?.getStringExtra("type")
             val meetingRoom = intent?.getStringExtra(Constants.REMOTE_MESSAGE_MEETING_ROOM)
             createNotificationChannel()
             serviceScope.launch {
                 val image = getBitmapFromUrl(imageUrl.toString())
-                val notification = createCallNotification(name, imageUrl, number, image, token, msg, meetingRoom)
+                val notification = createCallNotification(name, imageUrl, number, image, token, msgType, meetingRoom)
                 startForeground(NOTIFICATION_ID, notification)
             }
         }catch (e: Exception ) {

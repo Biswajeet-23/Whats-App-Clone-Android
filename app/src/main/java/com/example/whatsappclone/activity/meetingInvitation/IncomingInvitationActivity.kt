@@ -37,6 +37,7 @@ class IncomingInvitationActivity : AppCompatActivity() {
     private lateinit var database: FirebaseDatabase
     private lateinit var binding: ActivityIncomingInvitationBinding
     private lateinit var localBroadcastReceiver: BroadcastReceiver
+    private lateinit var meetingType: String
     companion object{
         private const val TAG = "IncomingInvitationActivity"
         private const val REMOTE_MESSAGE_MEETING_ROOM = "meeting_room"
@@ -56,6 +57,7 @@ class IncomingInvitationActivity : AppCompatActivity() {
         val number = intent.getStringExtra("number")
         val meetingRoom = intent.getStringExtra(REMOTE_MESSAGE_MEETING_ROOM)!!
         val receiverToken = intent.getStringExtra("fcmToken")!!
+        meetingType = intent.getStringExtra("message")!!
 
         Timber.tag(TAG).d("$name")
 
@@ -146,8 +148,10 @@ class IncomingInvitationActivity : AppCompatActivity() {
                                 val conferenceOptions = JitsiMeetConferenceOptions.Builder()
                                     .setServerURL(serverURL)
                                     .setRoom(meetingRoom)
-                                    .build()
-                                JitsiMeetActivity.launch(this@IncomingInvitationActivity, conferenceOptions)
+                                if(meetingType == "audio"){
+                                    conferenceOptions.setVideoMuted(true)
+                                }
+                                JitsiMeetActivity.launch(this@IncomingInvitationActivity, conferenceOptions.build())
                                 finish()
                             }else{
                                 runOnUiThread{

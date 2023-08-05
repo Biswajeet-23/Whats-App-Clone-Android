@@ -78,7 +78,14 @@ class CallFragment : Fragment(), UserListener {
         if(user.fcmToken == null || user.fcmToken.trim().isEmpty()){
             Toast.makeText(requireContext(), user.name + " is not available for meeting", Toast.LENGTH_SHORT).show()
         }else{
-            Toast.makeText(requireContext(), "Audio meeting with " + user.name, Toast.LENGTH_SHORT).show()
+            val intent = Intent(requireContext(), OutgoingInvitationActivity::class.java)
+            intent.putExtra("name", user.name)
+            intent.putExtra("token", user.fcmToken)
+            intent.putExtra("image", user.imageUrl)
+            intent.putExtra("number", user.number)
+            intent.putExtra("id", user.uid)
+            intent.putExtra("meetingType", "audio")
+            startActivity(intent)
         }
     }
 }

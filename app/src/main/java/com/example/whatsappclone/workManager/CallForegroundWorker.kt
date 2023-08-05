@@ -16,11 +16,12 @@ import com.example.whatsappclone.R
 import com.example.whatsappclone.Utils.Constants
 import com.example.whatsappclone.broadcastReceiver.NotificationBroadcastReceiver
 import com.example.whatsappclone.service.CallNotificationForegroundService
+import timber.log.Timber
 
 class CallForegroundWorker(appContext: Context, params: WorkerParameters): CoroutineWorker(appContext, params){
     override suspend fun doWork(): Result {
         val data = inputData
-        Log.d(TAG, "${data.getString(Constants.REMOTE_MESSAGE_MEETING_ROOM)}")
+        Timber.tag(TAG).d("${data.getString(Constants.REMOTE_MESSAGE_MEETING_ROOM)}")
         val notificationIntent = Intent(applicationContext, CallNotificationForegroundService::class.java)
         notificationIntent.apply {
             putExtra(MESSAGE_TYPE, data.getString(MESSAGE_TYPE))

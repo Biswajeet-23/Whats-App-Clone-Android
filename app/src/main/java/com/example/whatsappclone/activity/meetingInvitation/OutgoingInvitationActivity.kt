@@ -45,6 +45,7 @@ class OutgoingInvitationActivity : AppCompatActivity() {
     private lateinit var receiverToken: String
     private lateinit var localBroadcastReceiver: BroadcastReceiver
     private lateinit var meetingRoom: String
+    private lateinit var meetingType: String
     companion object{
         private const val TAG = "OutgoingInvitationActivity"
     }
@@ -53,7 +54,7 @@ class OutgoingInvitationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        val meetingType = intent.getStringExtra("meetingType")
+        meetingType = intent.getStringExtra("meetingType")!!
         val receiverName = intent.getStringExtra("name")
         receiverToken = intent.getStringExtra("token")!!
         val receiverImage = intent.getStringExtra("image")
@@ -62,11 +63,18 @@ class OutgoingInvitationActivity : AppCompatActivity() {
         senderUid = FirebaseAuth.getInstance().uid.toString()
         meetingRoom = senderUid
 
-        if(meetingType.equals("video")){
-            binding.callImg.setImageResource(R.drawable.baseline_videocam_24)
-            binding.callTV.text = "Video meeting with $receiverName"
-            binding.userName.text = receiverName
-            sendRemoteMessageInvitation()
+        if(meetingType != null){
+            if (meetingType == "video") {
+                binding.callImg.setImageResource(R.drawable.baseline_videocam_24)
+                binding.callTV.text = "Video meeting with $receiverName"
+                binding.userName.text = receiverName
+                sendRemoteMessageInvitation()
+            } else if (meetingType == "audio") {
+                binding.callImg.setImageResource(R.drawable.baseline_call_24)
+                binding.callTV.text = "Audio meeting with $receiverName"
+                binding.userName.text = receiverName
+                sendRemoteMessageInvitation()
+            }
         }
 
         if (receiverImage != null){
@@ -90,8 +98,10 @@ class OutgoingInvitationActivity : AppCompatActivity() {
                                     val conferenceOptions = JitsiMeetConferenceOptions.Builder()
                                         .setServerURL(serverURL)
                                         .setRoom(meetingRoom)
-                                        .build()
-                                    JitsiMeetActivity.launch(this@OutgoingInvitationActivity, conferenceOptions)
+                                    if(meetingType == "audio"){
+                                        conferenceOptions.setVideoMuted(true)
+                                    }
+                                    JitsiMeetActivity.launch(this@OutgoingInvitationActivity, conferenceOptions.build())
                                     finish()
                                 }catch (e: Exception){
                                     Timber.tag("Broadcast").d("${e.printStackTrace()}")
@@ -166,12 +176,11 @@ class OutgoingInvitationActivity : AppCompatActivity() {
                             val senderFcmToken = data?.fcmToken.toString()
                             val meetingRoom = senderUid
 
-                            Log.d(TAG, "$meetingRoom")
                             //model for sending the invitation
                             val notificationData = PushNotification(
                                 NotificationModel(
                                     Constants.TITLE,
-                                    "video",
+                                    meetingType,
                                     userImage,
                                     userName,
                                     userNo,
