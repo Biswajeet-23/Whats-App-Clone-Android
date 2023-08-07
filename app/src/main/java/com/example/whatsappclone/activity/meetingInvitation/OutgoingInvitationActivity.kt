@@ -28,12 +28,16 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jitsi.meet.sdk.JitsiMeetActivity
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
 import timber.log.Timber
+import java.lang.StringBuilder
+import java.lang.reflect.Type
 import java.net.URL
 import java.util.UUID
 
@@ -42,7 +46,7 @@ class OutgoingInvitationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityOutgoingInvitationBinding
     private lateinit var senderUid: String
     private lateinit var database: FirebaseDatabase
-    private lateinit var receiverToken: String
+    private var receiverToken: String? =""
     private lateinit var localBroadcastReceiver: BroadcastReceiver
     private lateinit var meetingRoom: String
     private lateinit var meetingType: String
@@ -54,31 +58,48 @@ class OutgoingInvitationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+
         meetingType = intent.getStringExtra("meetingType")!!
-        val receiverName = intent.getStringExtra("name")
-        receiverToken = intent.getStringExtra("token")!!
+        val groupVideoCall = intent.getBooleanExtra("isMultiple", false)
         val receiverImage = intent.getStringExtra("image")
 
         database = FirebaseDatabase.getInstance()
         senderUid = FirebaseAuth.getInstance().uid.toString()
         meetingRoom = senderUid
 
-        if(meetingType != null){
-            if (meetingType == "video") {
+        if(meetingType.isNotEmpty()){
+            if((meetingType == "video") && groupVideoCall){
+                val turnsType = object : TypeToken<ArrayList<UserModel>>(){}.type
+                val receivers = Gson().fromJson<ArrayList<UserModel>>(intent.getStringExtra("selected_users"), turnsType)
                 binding.callImg.setImageResource(R.drawable.baseline_videocam_24)
-                binding.callTV.text = "Video meeting with $receiverName"
-                binding.userName.text = receiverName
-                sendRemoteMessageInvitation()
-            } else if (meetingType == "audio") {
-                binding.callImg.setImageResource(R.drawable.baseline_call_24)
-                binding.callTV.text = "Audio meeting with $receiverName"
-                binding.userName.text = receiverName
-                sendRemoteMessageInvitation()
+                val userName = StringBuilder()
+                for(i in receivers.indices){
+                    userName.append(receivers[i].name).append("\n")
+                }
+                binding.callTV.text = "Video meetings with $userName"
+                binding.userName.text = userName
+                sendRemoteMessageInvitation(receivers)
+            }else{
+                val receiverName = intent.getStringExtra("name")
+                receiverToken = intent.getStringExtra("token")!!
+                if (meetingType == "video") {
+                    binding.callImg.setImageResource(R.drawable.baseline_videocam_24)
+                    binding.callTV.text = "Video meeting with $receiverName"
+                    binding.userName.text = receiverName
+                    sendRemoteMessageInvitation(null)
+                } else if (meetingType == "audio") {
+                    binding.callImg.setImageResource(R.drawable.baseline_call_24)
+                    binding.callTV.text = "Audio meeting with $receiverName"
+                    binding.userName.text = receiverName
+                    sendRemoteMessageInvitation(null)
+                }
             }
         }
 
         if (receiverImage != null){
             Glide.with(this).load(receiverImage).into(binding.callImg)
+        }else if(groupVideoCall){
+            Glide.with(this).load(R.drawable.baseline_group_24).into(binding.callImg)
         }
 
         // Initialize the local broadcast receiver
@@ -163,7 +184,7 @@ class OutgoingInvitationActivity : AppCompatActivity() {
             )
     }
 
-    private fun sendRemoteMessageInvitation(){
+    private fun sendRemoteMessageInvitation(receivers: ArrayList<UserModel>?){
         database.reference.child("users")
             .child(senderUid).addListenerForSingleValueEvent(
                 object: ValueEventListener{
@@ -176,6 +197,22 @@ class OutgoingInvitationActivity : AppCompatActivity() {
                             val senderFcmToken = data?.fcmToken.toString()
                             val meetingRoom = senderUid
 
+                            if(receivers != null){
+                                for(i in receivers.indices){
+                                    val notificationData = PushNotification(
+                                        NotificationModel(
+                                            Constants.TITLE,
+                                            meetingType,
+                                            userImage,
+                                            userName,
+                                            userNo,
+                                            senderFcmToken,
+                                            "",
+                                            meetingRoom
+                                        ), receivers[i].fcmToken)
+                                    sendVideoNotification(notificationData)
+                                }
+                            }
                             //model for sending the invitation
                             val notificationData = PushNotification(
                                 NotificationModel(

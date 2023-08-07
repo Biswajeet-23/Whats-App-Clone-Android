@@ -49,8 +49,8 @@ class CloudMessagingService: FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
-        val videoMsg = "video"
-        val imageUrl = message.data["imgUrl"]
+//        val videoMsg = "video"
+//        val imageUrl = message.data["imgUrl"]
 //        val image = getBitmapFromUrl(imageUrl.toString())
         if(message.data["title"] == Constants.TITLE){
 

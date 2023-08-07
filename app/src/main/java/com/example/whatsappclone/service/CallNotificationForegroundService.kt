@@ -25,6 +25,7 @@ import com.example.whatsappclone.broadcastReceiver.NotificationBroadcastReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -77,6 +78,10 @@ class CallNotificationForegroundService: Service() {
         msg: String?,
         meetingRoom: String?
     ): Notification? {
+
+//        val vibrationPattern = longArrayOf(0, 500, 500, 500, 500)
+        vibratePhone()
+
             val receiveCallAction = Intent(this, IncomingInvitationActivity::class.java)
             receiveCallAction.putExtra("name", name)
             receiveCallAction.putExtra("image", imageUrl)
@@ -105,12 +110,14 @@ class CallNotificationForegroundService: Service() {
             val cancelCallPendingIntent = PendingIntent.getBroadcast(this, 1201, cancelCallAction, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
             return NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Incoming Video Call")
+                .setContentTitle("Incoming $msg call")
                 .setContentText(name)
                 .setSmallIcon(R.drawable.whatsapp_logo)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_CALL)
                 .setLargeIcon(image)
+                .setTimeoutAfter(30 * 1000)
+                .setOngoing(true)
                 .addAction(R.drawable.baseline_videocam, "Accept", receiveCallPendingIntent)
                 .addAction(R.drawable.baseline_close_24, "Reject", cancelCallPendingIntent)
                 .setFullScreenIntent(receiveCallPending, true)
@@ -145,21 +152,26 @@ class CallNotificationForegroundService: Service() {
             null
         }
     }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
+    }
+
     private fun vibratePhone(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val vibrateManager: VibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-            if(vibrateManager.defaultVibrator.areAllPrimitivesSupported(VibrationEffect.Composition.PRIMITIVE_LOW_TICK)){
+            if(vibrateManager.defaultVibrator.areAllPrimitivesSupported(VibrationEffect.Composition.PRIMITIVE_SPIN)){
                 vibrateManager.vibrate(
                     CombinedVibration.createParallel(
                         VibrationEffect.startComposition()
-                            .addPrimitive(VibrationEffect.Composition.PRIMITIVE_LOW_TICK)
+                            .addPrimitive(VibrationEffect.Composition.PRIMITIVE_SPIN)
                             .compose()
                     )
                 )
             }
         } else {
             val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            val VIBRATION_DURATION = 20000L
+            val VIBRATION_DURATION = 10 * 1000L
             vibrator.vibrate(
                 VibrationEffect.createOneShot(
                     VIBRATION_DURATION,
@@ -168,9 +180,23 @@ class CallNotificationForegroundService: Service() {
             )
         }
     }
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
+
+//    private fun vibratingNotification() {
+//        // Vibrate for 500 milliseconds
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            val vibrationEffect = VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+//            vibrator.vibrate(vibrationEffect)
+//        } else {
+//            // For versions below Android 12, use the deprecated method
+//            @Suppress("DEPRECATION")
+//            vibrator.vibrate(1 * 500)
+//        }
+//    }
+
+//    private fun stopVibrationAndDismissNotification() {
+//        vibrator.cancel()
+//        stopForeground(STOP_FOREGROUND_DETACH)
+//    }
 
 //    override fun onDestroy() {
 //        super.onDestroy()

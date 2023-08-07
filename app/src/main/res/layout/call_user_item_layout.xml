@@ -2,7 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:animateLayoutChanges="true"
+    android:id="@+id/container">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardView2"
@@ -23,13 +25,35 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/selectUser"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:cardCornerRadius="50dp"
+        android:backgroundTint="#64DD17"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center"
+            android:src="@drawable/baseline_check_24"
+            />
+
+    </com.google.android.material.card.MaterialCardView>
+
         <LinearLayout
             android:id="@+id/lL1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/cardView2"
             android:layout_centerVertical="true"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_marginStart="15dp">
 
             <TextView
@@ -39,6 +63,7 @@
                 android:textColor="@color/black"
                 android:text="Warrio"
                 android:textSize="18sp"
+                android:layout_gravity="center_vertical"
                 android:textStyle="bold"/>
 
         </LinearLayout>

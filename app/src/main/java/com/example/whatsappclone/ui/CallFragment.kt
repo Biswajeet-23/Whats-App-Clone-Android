@@ -20,6 +20,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.gson.Gson
 
 class CallFragment : Fragment(), UserListener {
 
@@ -27,6 +28,7 @@ class CallFragment : Fragment(), UserListener {
     private val binding get() = _binding
     private var database: FirebaseDatabase? =null
     lateinit var userList: ArrayList<UserModel>
+    private lateinit var userAdapter: CallAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,7 +50,8 @@ class CallFragment : Fragment(), UserListener {
                             userList.add(user)
                         }
                     }
-                    binding?.callListRecyclerView?.adapter = CallAdapter(requireContext(), userList, this@CallFragment)
+                    userAdapter = CallAdapter(requireContext(), userList, this@CallFragment)
+                    binding?.callListRecyclerView?.adapter = userAdapter
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -86,6 +89,21 @@ class CallFragment : Fragment(), UserListener {
             intent.putExtra("id", user.uid)
             intent.putExtra("meetingType", "audio")
             startActivity(intent)
+        }
+    }
+
+    override fun onMultipleUsersAction(isMultipleUsersSelected: Boolean) {
+        if(isMultipleUsersSelected){
+            binding?.conferenceContainer?.visibility = View.VISIBLE
+            binding?.conferenceContainer?.setOnClickListener {
+                val intent = Intent(requireContext(), OutgoingInvitationActivity::class.java)
+                intent.putExtra("meetingType", "video")
+                intent.putExtra("isMultiple", true)
+                intent.putExtra("selected_users", Gson().toJson(userAdapter.getSelectedUsers()))
+                startActivity(intent)
+            }
+        }else{
+            binding?.conferenceContainer?.visibility = View.GONE
         }
     }
 }

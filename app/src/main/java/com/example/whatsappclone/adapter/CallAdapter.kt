@@ -20,6 +20,7 @@ import com.google.android.material.card.MaterialCardView
 class CallAdapter(var context: Context, var list: ArrayList<UserModel>, private var userlistener: UserListener) : RecyclerView.Adapter<CallAdapter.CallViewHolder>() {
 
     private val userListener: UserListener = userlistener
+    private var selectedUsers: MutableList<UserModel> = mutableListOf()
     inner class CallViewHolder(view: View) : RecyclerView.ViewHolder(view){
         var binding : CallUserItemLayoutBinding = CallUserItemLayoutBinding.bind(view)
         val profileImageView: MaterialCardView = view.findViewById(R.id.cardView2)
@@ -44,5 +45,35 @@ class CallAdapter(var context: Context, var list: ArrayList<UserModel>, private 
         holder.binding.audioMeeting.setOnClickListener {
             userListener.initiateAudioMeeting(user)
         }
+        holder.binding.container.setOnLongClickListener{
+            selectedUsers.add(user)
+            holder.binding.selectUser.visibility = View.VISIBLE
+            holder.binding.videoMeeting.visibility = View.GONE
+            holder.binding.audioMeeting.visibility = View.GONE
+            userListener.onMultipleUsersAction(true)
+            true
+        }
+        holder.binding.container.setOnClickListener {
+            if(holder.binding.selectUser.visibility == View.VISIBLE){
+                selectedUsers.remove(user)
+                holder.binding.selectUser.visibility = View.GONE
+                holder.binding.videoMeeting.visibility = View.VISIBLE
+                holder.binding.audioMeeting.visibility = View.VISIBLE
+                if(selectedUsers.size == 0){
+                    userListener.onMultipleUsersAction(false)
+                }
+            }else{
+                if(selectedUsers.size > 0){
+                    selectedUsers.add(user)
+                    holder.binding.selectUser.visibility = View.VISIBLE
+                    holder.binding.videoMeeting.visibility = View.GONE
+                    holder.binding.audioMeeting.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    public fun getSelectedUsers(): List<UserModel>{
+        return selectedUsers
     }
 }
